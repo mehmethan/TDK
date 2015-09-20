@@ -2,8 +2,15 @@ package mehmet.tdk;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,4 +41,28 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void makeSearch(View v){
+
+        EditText keywordText = (EditText) findViewById(R.id.keyword);
+
+
+        TdkAsyncTask asyncTask = new TdkAsyncTask(c, keywordText.getText().toString());
+        asyncTask.execute();
+    }
+
+    final Callback c = new Callback() {
+        @Override
+        public void onProgress() {
+
+        }
+
+        @Override
+        public void onResult(String http_result) {
+            TextView resultText = (TextView) findViewById(R.id.result);
+
+            Document document = Jsoup.parse(http_result);
+            resultText.setText(Html.fromHtml(document.select("#hor-minimalist-a").html()));
+        }
+    };
 }
